@@ -6,8 +6,8 @@ Master execution plan for building the Codebase Intelligence Graph (CIG) system.
 Build an end-to-end Codebase Intelligence Graph system that parses repository code into typed structural AST graphs, enriches nodes and edges with 5 specialized NLP models, persists graph data in Neo4j, enables vector retrieval via FAISS, and exposes graph exploration through FastAPI endpoints and an interactive React/D3.js frontend UI.
 
 ## Current System State
-- **Status**: Executing Phase 6.
-- **Next Step**: Complete Phase 6 — RAG Indexing and Semantic Retrieval (FAISS).
+- **Status**: Executing Phase 7.
+- **Next Step**: Complete Phase 7 — API Endpoints (FastAPI, Celery, Redis).
 
 ---
 
@@ -20,7 +20,7 @@ Build an end-to-end Codebase Intelligence Graph system that parses repository co
 | **Phase 3** | Structural Graph Construction | `graph_engineer` | `complete` |
 | **Phase 4** | Persistence Layer and Cypher Access (Neo4j) | `graph_engineer` / `backend_developer` | `complete` |
 | **Phase 5** | Model Inference Interfaces and Mock Outputs | `ml_engineer` | `complete` |
-| **Phase 6** | RAG Indexing and Semantic Retrieval (FAISS) | `backend_developer` / `ml_engineer` | `todo` |
+| **Phase 6** | RAG Indexing and Semantic Retrieval (FAISS) | `backend_developer` / `ml_engineer` | `complete` |
 | **Phase 7** | API Endpoints (FastAPI, Celery, Redis) | `api_designer` / `backend_developer` | `todo` |
 | **Phase 8** | Frontend Visualization (React, D3.js, TailwindCSS) | `frontend_developer` | `todo` |
 | **Phase 9** | Training and Evaluation Refinement | `eval_engineer` / `ml_engineer` | `todo` |

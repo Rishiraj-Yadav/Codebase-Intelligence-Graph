@@ -162,6 +162,24 @@ CIG is a semantic code understanding system that parses code repositories into t
 4. **Deterministic Fast Mock Implementations**:
    - `cig/models/mock_models.py` provides zero-dependency, deterministic mock providers for M1-M5 and a unified `MockModelPipeline` that produce deterministic outputs based on SHA-256 code content hashes.
 
+---
+
+## 9. Phase 5 Pipeline Orchestration & Retrieval Indexing Decisions & Key Takeaways
+
+1. **End-to-End Pipeline Composition**:
+   - `IngestionPipeline` sequentially links parsing (`parse_repository`), M1-M4 node enrichment, M5 edge enrichment, graph persistence (`Neo4jAdapter`), dense embedding (`NodeEmbedder`), and vector index building (`FAISSIndex`).
+
+2. **L2-Normalized Inner Product Vector Indexing**:
+   - `FAISSIndex` utilizes `faiss.IndexFlatIP` combined with L2-normalized float32 embeddings (`NodeEmbedder`), ensuring cosine similarity search without expensive distance conversions.
+   - Maintains a JSON-serialized metadata sidecar (`.meta.json`) for integer index $\leftrightarrow$ string `node_id` mappings.
+
+3. **Hybrid RAG Codebase Search Engine**:
+   - `CodebaseSearchEngine` integrates vector retrieval (`FAISSIndex`) with graph storage property lookup (`Neo4jAdapter`). Queries are embedded into the same dense vector space, matched via FAISS top-k search, and hydrated with full graph annotations from Neo4j.
+
+4. **Asynchronous Processing via Celery & Redis**:
+   - Celery tasks (`ingest_repository_task`) wrap the ingestion pipeline for non-blocking asynchronous repository processing, using Redis as the broker and result backend.
+
+
 
 
 

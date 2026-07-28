@@ -9,7 +9,7 @@ A running log of build progress, phase milestones, session logs, and test result
 - [x] **Phase 3: Structural Graph Construction** — Resolve symbol references and construct directed in-memory structural code graphs (`calls`, `imports`, `inherits`, `instantiates`).
 - [x] **Phase 4: Persistence Layer and Cypher Access** — Persist graph structures and annotations into Neo4j Community Edition with Cypher queries.
 - [x] **Phase 5: Model Inference Interfaces and Mock Outputs** — Build inference wrappers and mock providers for M1-M5 NLP models.
-- [ ] **Phase 6: RAG Indexing and Semantic Retrieval** — Build embedding pipelines and FAISS indexer for hybrid semantic and structural codebase search.
+- [x] **Phase 6: RAG Indexing and Semantic Retrieval** — Build embedding pipelines and FAISS indexer for hybrid semantic and structural codebase search.
 - [ ] **Phase 7: API Endpoints** — Build FastAPI backend REST services and Celery + Redis background task processing for repository ingestion.
 - [ ] **Phase 8: Frontend Graph Exploration UI** — Build React + D3.js + TailwindCSS interactive graph explorer, filter panel, and node inspector.
 - [ ] **Phase 9: Training and Evaluation Refinement** — Train/fine-tune M1-M5 models, track with W&B, and evaluate against target metrics.
@@ -70,6 +70,22 @@ A running log of build progress, phase milestones, session logs, and test result
   - `cig/models/__init__.py`: Package exports for model interfaces and mock models.
   - `tests/test_model_interfaces.py`: 21 comprehensive unit tests for M1-M5 interfaces, mock providers, confidence bounds, edge cases, and pipeline orchestration.
 - **Status**: Phase 4 Completed successfully (63/63 passing tests).
+
+### Session 6 — Phase 5: Pipeline Orchestration and Retrieval Indexing Execution
+- **Date**: 2026-07-29
+- **Goal**: Implement ingestion pipeline orchestration, UniXcoder node embedder, FAISS vector indexer, Celery async task queue, hybrid codebase search engine, Redis service integration, and pipeline tests.
+- **Deliverables**:
+  - `cig/pipelines/ingestion_pipeline.py`: `IngestionPipeline` orchestrating AST parsing, M1-M5 NLP enrichment, Neo4j persistence, UniXcoder node embedding, and FAISS indexing.
+  - `cig/pipelines/celery_tasks.py`: Celery task definitions (`ingest_repository_task`, `get_task_status`) with Redis broker/backend configuration.
+  - `cig/pipelines/__init__.py`: Pipeline package entrypoints.
+  - `cig/retrieval/embedder.py`: `NodeEmbedder` generating L2-normalized 768-dim float32 embeddings for nodes and code snippets with fallback.
+  - `cig/retrieval/faiss_index.py`: `FAISSIndex` wrapping `faiss.IndexFlatIP` with integer-to-node_id mapping, top-k inner product search, and save/load serialization.
+  - `cig/retrieval/search.py`: `CodebaseSearchEngine` orchestrating query embedding, FAISS top-k retrieval, and Neo4j node metadata fetching.
+  - `docker-compose.yml`: Added Redis service (`redis:7-alpine`, port 6379) for Celery task broker and result backend.
+  - `tests/test_retrieval.py`: 12 tests for vector normalization, FAISS indexing, mapping, search, and index persistence.
+  - `tests/test_pipeline.py`: 6 tests for end-to-end ingestion pipeline, NLP node/edge enrichment, Neo4j persistence, FAISS indexing, Celery async tasks, and semantic search retrieval.
+- **Status**: Phase 5 Completed successfully (81/81 passing tests).
+
 
 
 
