@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0B0F17] text-slate-100 font-sans antialiased min-h-screen overflow-hidden;
+  }
+}
+
+/* Custom Scrollbar for Drawer and Search Results */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4B5563;
+}
+
+/* Code Smell Pulsing Animation for Graph SVG Nodes */
+@keyframes smellPulse {
+  0% {
+    stroke-opacity: 1;
+    stroke-width: 3px;
+    r: 1.0;
+  }
+  50% {
+    stroke-opacity: 0.3;
+    stroke-width: 7px;
+  }
+  100% {
+    stroke-opacity: 1;
+    stroke-width: 3px;
+  }
+}
+
+.node-smell-pulse {
+  animation: smellPulse 1.8s ease-in-out infinite;
+  stroke: #EF4444 !important;
+}
+
+/* Impact Node Highlight Glow */
+@keyframes impactGlow {
+  0% {
+    filter: drop-shadow(0 0 4px #F59E0B);
+  }
+  100% {
+    filter: drop-shadow(0 0 12px #EF4444);
+  }
+}
+
+.node-impact-highlight {
+  animation: impactGlow 1.2s ease-in-out infinite alternate;
+}
+
+/* D3 Graph SVG Styling */
+.graph-svg {
+  cursor: grab;
+  user-select: none;
+}
+
+.graph-svg:active {
+  cursor: grabbing;
+}
+
+.graph-link {
+  transition: stroke 0.2s, stroke-width 0.2s, stroke-opacity 0.2s;
+}
+
+.graph-node {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.graph-node:hover circle {
+  filter: brightness(1.25);
+}
+
+.graph-node text {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}

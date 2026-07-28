@@ -193,6 +193,23 @@ CIG is a semantic code understanding system that parses code repositories into t
 3. **Dependency Injection & Clean Testability**:
    - Storage adapter and search engine instances are injected via FastAPI dependencies (`cig/api/dependencies.py`), enabling seamless dependency overrides during testing (`app.dependency_overrides`).
 
+---
+
+## 11. Phase 7 Frontend Graph Visualization Decisions & Key Takeaways
+
+1. **Multidimensional Visual Node Encoding**:
+   - **Node Radius**: Scaled proportionally to line count ($\text{radius} \in [10, 32]$).
+   - **Node Fill Color**: Categorically mapped to 15 intent categories using curated HSL palettes.
+   - **Node Stroke Border**: Encodes M2 doc quality score ($\ge 80$ emerald, $\ge 50$ amber, $<50$ red).
+   - **Node Border Animation**: Applies a keyframe CSS pulse (`.node-smell-pulse`) for nodes with detected code smells.
+
+2. **Grounded Explainability & Uncertainty Display**:
+   - The slide-over detail drawer (`NodeDrawer.jsx`) displays explicit numerical confidence scores for all M1-M5 model predictions alongside raw source code snippets and provenance metadata.
+
+3. **Resilient Dual-Mode API Integration**:
+   - `client.js` attempts live connection to `http://localhost:8000`. If backend services are disconnected, it seamlessly degrades to `mockData.js`, ensuring full interactive visualization capability during offline presentation.
+
+
 
 
 
