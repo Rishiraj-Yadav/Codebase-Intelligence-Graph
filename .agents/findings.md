@@ -179,6 +179,21 @@ CIG is a semantic code understanding system that parses code repositories into t
 4. **Asynchronous Processing via Celery & Redis**:
    - Celery tasks (`ingest_repository_task`) wrap the ingestion pipeline for non-blocking asynchronous repository processing, using Redis as the broker and result backend.
 
+---
+
+## 10. Phase 6 API Endpoint Decisions & Key Takeaways
+
+1. **Strict Separation of Async Ingestion & Read Query APIs**:
+   - Repository ingestion (`POST /ingest`) returns an immediate asynchronous job handle (`job_id`) and status endpoint (`GET /ingest/{job_id}/status`) without blocking HTTP clients.
+   - Graph exploration (`/nodes`, `/edges`, `/impact`) and semantic search (`/search`) operate as synchronous read endpoints.
+
+2. **Mandatory Confidence, Provenance, & Evidence Fields**:
+   - API response contracts (`cig/api/schemas.py`) enforce explicit `confidence` scores (bounded `[0.0, 1.0]`), `provenance` metadata (`file_path`, `source_span`), and model `evidence` payloads on all annotation responses.
+
+3. **Dependency Injection & Clean Testability**:
+   - Storage adapter and search engine instances are injected via FastAPI dependencies (`cig/api/dependencies.py`), enabling seamless dependency overrides during testing (`app.dependency_overrides`).
+
+
 
 
 

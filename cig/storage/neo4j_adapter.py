@@ -172,8 +172,14 @@ class Neo4jAdapter:
             return records[0]["n"]
         return None
 
-    def list_nodes_by_type(self, node_type: Union[NodeType, str]) -> List[Dict[str, Any]]:
-        """List all nodes matching node_type ('function', 'class', 'module')."""
+    def list_nodes_by_type(self, node_type: Optional[Union[NodeType, str]] = None) -> List[Dict[str, Any]]:
+        """List nodes matching node_type ('function', 'class', 'module') or all nodes if None."""
+        if node_type is None:
+            if self.in_fallback_mode or self.driver is None:
+                return list(self._memory_nodes.values())
+            records = self.execute_query("MATCH (n:Node) RETURN n")
+            return [r["n"] for r in records if "n" in r]
+
         type_str = node_type.value if isinstance(node_type, NodeType) else str(node_type)
         if self.in_fallback_mode or self.driver is None:
             return [n for n in self._memory_nodes.values() if n.get("node_type") == type_str]
@@ -181,8 +187,22 @@ class Neo4jAdapter:
         records = self.execute_query(LIST_NODES_BY_TYPE, {"node_type": type_str})
         return [r["n"] for r in records if "n" in r]
 
-    def list_edges_by_type(self, edge_type: Union[StructuralEdgeType, str]) -> List[Dict[str, Any]]:
-        """List all edges matching edge_type ('calls', 'imports', 'inherits', 'instantiates')."""
+    def list_edges_by_type(self, edge_type: Optional[Union[StructuralEdgeType, str]] = None) -> List[Dict[str, Any]]:
+        """List edges matching edge_type ('calls', 'imports', 'inherits', 'instantiates') or all edges if None."""
+        if edge_type is None:
+            if self.in_fallback_mode or self.driver is None:
+                return list(self._memory_edges.values())
+            records = self.execute_query("MATCH (s:Node)-[r]->(t:Node) RETURN r, s.id AS source_id, t.id AS target_id")
+            result = []
+            for r in records:
+                edge_data = r.get("r", {})
+                if "source_id" in r and "source_id" not in edge_data:
+                    edge_data["source_id"] = r["source_id"]
+                if "target_id" in r and "target_id" not in edge_data:
+                    edge_data["target_id"] = r["target_id"]
+                result.append(edge_data)
+            return result
+
         type_str = edge_type.value if isinstance(edge_type, StructuralEdgeType) else str(edge_type)
         if self.in_fallback_mode or self.driver is None:
             return [e for e in self._memory_edges.values() if e.get("edge_type") == type_str]

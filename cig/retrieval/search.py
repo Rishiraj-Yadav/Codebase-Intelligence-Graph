@@ -36,13 +36,21 @@ class CodebaseSearchEngine:
         else:
             self.faiss_index = FAISSIndex()
 
-    def search(self, query: str, top_k: int = 5) -> Dict[str, Any]:
+    def search(
+        self,
+        query: str,
+        top_k: int = 5,
+        intent_filter: Optional[str] = None,
+        smell_filter: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """
-        Performs natural language semantic search across the codebase index.
+        Performs natural language semantic search across the codebase index with optional metadata filters.
 
         Args:
             query: Natural language search query string.
             top_k: Maximum number of search results to return.
+            intent_filter: Optional intent label filter.
+            smell_filter: Optional code smell label filter.
 
         Returns:
             Dict[str, Any]: Structured search payload containing query, total_results, and results list.
@@ -58,22 +66,34 @@ class CodebaseSearchEngine:
         query_vector = self.node_embedder.embed_code(query)
 
         # 2. Perform FAISS top-k vector similarity search
-        hits = self.faiss_index.search(query_vector, top_k=top_k)
+        hits = self.faiss_index.search(query_vector, top_k=top_k * 3 if (intent_filter or smell_filter) else top_k)
 
         # 3. Retrieve node metadata and annotations from Neo4j
         results: List[Dict[str, Any]] = []
         for hit in hits:
             node_id = hit["node_id"]
             score = hit["score"]
-            node_details = self.neo4j_adapter.get_node_by_id(node_id)
+            node_details = self.neo4j_adapter.get_node_by_id(node_id) or {"id": node_id}
+
+            if intent_filter:
+                intents = node_details.get("intent_labels", [])
+                if isinstance(intents, list) and intent_filter not in intents:
+                    continue
+
+            if smell_filter:
+                smells = node_details.get("smell_labels", [])
+                if isinstance(smells, list) and smell_filter not in smells:
+                    continue
 
             results.append(
                 {
                     "node_id": node_id,
                     "score": round(float(score), 4),
-                    "node": node_details or {"id": node_id},
+                    "node": node_details,
                 }
             )
+            if len(results) >= top_k:
+                break
 
         payload = {
             "query": query,
