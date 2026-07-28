@@ -19,7 +19,7 @@
         "@modelcontextprotocol/server-github"
       ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "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"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "api_keuy"
       }
     },
     "context7": {
@@ -31,7 +31,7 @@
         "ctx7"
       ],
       "env": {
-        "CONTEXT7_API_KEY": "ctx7sk-e17aa1c6-990a-49c3-8f52-112765b2eeaf"
+        "CONTEXT7_API_KEY": "api_key"
       }
     },
     "chrome-devtools": {
