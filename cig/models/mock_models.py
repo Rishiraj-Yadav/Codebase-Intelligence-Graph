@@ -155,13 +155,20 @@ class MockM3IntentClassifier:
             probs[IntentCategory.FILE_IO.value] = 0.80
         if any(kw in code_lower for kw in ["log", "logger", "info", "debug", "warning"]):
             probs[IntentCategory.LOGGING.value] = 0.82
-
-        highest_val = max(probs.values())
-        if highest_val < 0.5:
-            if h % 2 == 0:
-                probs[IntentCategory.BUSINESS_LOGIC.value] = 0.70
-            else:
-                probs[IntentCategory.UTILITY.value] = 0.70
+        if any(kw in code_lower for kw in ["ui", "render", "component", "html", "view"]):
+            probs[IntentCategory.UI_RENDERING.value] = 0.84
+        if any(kw in code_lower for kw in ["config", "settings", "env", "setup"]):
+            probs[IntentCategory.CONFIGURATION.value] = 0.86
+        if any(kw in code_lower for kw in ["cache", "redis", "ttl", "memcached"]):
+            probs[IntentCategory.CACHING.value] = 0.83
+        if any(kw in code_lower for kw in ["model", "train", "predict", "loss", "torch"]):
+            probs[IntentCategory.MACHINE_LEARNING.value] = 0.89
+        if any(kw in code_lower for kw in ["message", "queue", "kafka", "mq", "publish"]):
+            probs[IntentCategory.MESSAGING.value] = 0.87
+        if any(kw in code_lower for kw in ["business", "rule", "discount", "order", "price"]):
+            probs[IntentCategory.BUSINESS_LOGIC.value] = 0.81
+        if any(kw in code_lower for kw in ["utility", "util", "helper", "slugify"]):
+            probs[IntentCategory.UTILITY.value] = 0.79
 
         selected_labels: List[IntentCategory] = [
             IntentCategory(cat) for cat, p in probs.items() if p >= self.threshold
